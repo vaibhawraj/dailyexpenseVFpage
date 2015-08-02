@@ -1,0 +1,110 @@
+<html>
+<head>
+<link rel="stylesheet" href="css/bootstrap.min.css"></link>
+	<link rel="stylesheet" href="css/bootstrap_extension.css"></link>
+	
+	<!-- jQuery library -->
+	<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>-->
+	<script src="js/jquery.min.js"></script>
+	
+	<!-- Latest compiled JavaScript -->
+	<!--<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>-->
+	<script src="js/bootstrap.min.js"></script>
+	
+	<!-- Define Angularjs -->
+	<!-- <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script> -->
+	<script src="js/angular.min.js"></script>
+	<style type="text/css">
+		.vis{
+			display:block;
+		}
+		.nvis {
+			display:none;
+		}
+	</style>
+</head>
+<body>
+<div ng-app="demo" ng-controller="myCtrl" class="container-fluid">
+	<h3>listSelect demo {{ Name }} {{ select.selection }}</h3>
+	<div listselect ng-Model="select"></div><button ng-click="updateSelect()">Update</button>
+</div>
+</body>
+</html>
+
+<script>
+var cc;
+angular.module('demo',[])
+.directive('listselect',function(){
+	return {
+		restrict: 'AE',
+		scope: {
+		   value: '=ngModel'
+		},
+		template: '<input list="catlist" type="text" style="width:150px;" ng-keyup="search()" ng-model="key"></input>' +
+			'<div id="catlist" multiple style="width:150px;border:solid 1px black;height:auto;">' +
+			'<div id="i{{ $index }}" ng-repeat="x in value.list" ng-click="sel($index)" ng-class="{vis:visId[$index],nvis:!visId[$index]}" style="">{{ x.name }}</div>' +
+			 '</div>',
+		require:'ngModel',
+		link: function(scope,iElement,iAttrs,ngModelController){
+			scope.key = '';
+			scope.value = {
+				selection : '-',
+				list : [{
+					id:'0x0',
+					name:'Apple'
+				},
+				{
+					id:'0x1',
+					name:'Ball'
+				}]
+			};
+			scope.sel = function(i){
+				scope.value.selection = scope.value.list[i].id;
+			};
+			ngModelController.$render = function(){
+				v = ngModelController.$viewValue;
+				for(i=0;i<v.list.length;i++)
+				{
+					scope.visId[i] = false;
+				}
+			};
+			scope.visId = [false,false];
+			scope.search = function(){
+				str = scope.key.toLowerCase();
+				if(str=="") {
+					for(i=0;i<scope.visId.length;i++)
+					{
+						scope.visId[i] = false;
+					}
+					return;
+				};
+				for(i=0;i<scope.value.list.length;i++)
+				{
+					
+					z=(scope.value.list[i].name).toLowerCase();
+					if(z.indexOf(str)>-1)
+					{
+						scope.visId[i]=true;
+					}
+				}
+			};
+		}
+	};
+})
+.controller('myCtrl',function($scope){
+	$scope.Name = 'Vaibhaw';
+	
+	$scope.updateSelect = function(){
+		$scope.select = {
+		selection : 'none',
+		list : [{id:'0x0',	name: 'Apple'},
+			{id:'0x1',	name: 'Ball'},
+			{id:'0x2',	name: 'Cat'},
+			{id:'1x0',	name: 'Dog'},
+			{id:'1x1',	name: 'No-Dog'}
+		]
+		};
+	};
+});
+
+</script>

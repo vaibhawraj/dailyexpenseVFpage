@@ -1,0 +1,11 @@
+/*	Bootstrap Extension
+ * 
+ */
+
+.required {
+	border-left:solid 3px red;
+}
+.active-row {
+	background-color:blue;
+	color:white;
+}
